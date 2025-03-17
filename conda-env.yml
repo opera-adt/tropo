@@ -1,7 +1,7 @@
 name: opera_tropo
 channels:
   - conda-forge
-  - defaults
+  - nodefaults
 dependencies:
   - python>=3.11
   - pip>=21.3  # https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/#editable-installation
