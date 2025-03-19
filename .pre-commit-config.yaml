@@ -8,28 +8,39 @@ repos:
       # https://github.com/pre-commit/pre-commit-hooks/issues/718
       # - id: check-added-large-files  # Fails with git v1.8.3
       - id: check-case-conflict
+        exclude: '.*\.ipynb$'
       - id: check-docstring-first
+        exclude: '.*\.ipynb$'
       - id: check-merge-conflict
+        exclude: '.*\.ipynb$'
       - id: check-yaml
+        exclude: '.*\.ipynb$'
         args: [--allow-multiple-documents]
       - id: debug-statements
+        exclude: '.*\.ipynb$'
       - id: end-of-file-fixer
+        exclude: '.*\.ipynb$'
       - id: file-contents-sorter
+        exclude: '.*\.ipynb$'
         files: (requirements.txt)$
       - id: mixed-line-ending
+        exclude: '.*\.ipynb$'
       - id: trailing-whitespace
+        exclude: '.*\.ipynb$'
 
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.3
     hooks:
       - id: ruff
+        exclude: '.*\.ipynb$'
         args: [--fix, --exit-non-zero-on-fix, --show-fixes]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.14.1"
     hooks:
       - id: mypy
+        exclude: '.*\.ipynb$'
         additional_dependencies:
         - types-setuptools
         - types-requests
@@ -40,4 +51,5 @@ repos:
     rev: "24.10.0"
     hooks:
       - id: black
+        exclude: '.*\.ipynb$'
         args: [--preview]

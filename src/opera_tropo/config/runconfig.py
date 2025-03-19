@@ -3,12 +3,10 @@ from __future__ import annotations
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional, Dict, List
-import numpy as np
+from typing import Any, Dict, List, Optional
 
 from pydantic import (
     BaseModel,
-    ConfigDict,
     Field,
     PrivateAttr,
 )
@@ -30,21 +28,11 @@ __all__ = [
     "TropoWorkflow",
 ]
 
-PRODUCT_VERSION = '0.1'
-DEFAULT_ENCODING_OPTIONS = {
-        "zlib": True,
-        "complevel": 5,
-        "shuffle": True
-        }
+PRODUCT_VERSION = "0.1"
+DEFAULT_ENCODING_OPTIONS = {"zlib": True, "complevel": 5, "shuffle": True}
+
 
 # Base model
-## NOTE add option to specify s3 path
-'''
-import s3fs
-fs = s3fs.S3FileSystem(anon=True)
-aws_url = 's3://opera-dev-lts-fwd-hyunlee/20190825/D08250000082500001.zz.nc'
-'''
-
 class InputOptions(BaseModel, extra="forbid"):
     """Options specifying input datasets for workflow."""
 
@@ -53,20 +41,13 @@ class InputOptions(BaseModel, extra="forbid"):
     input_file_path: str | Path = Field(
         default_factory=str,
         description="Path to the input HRES model hres_model.nc",
-        )
+    )
 
     date_fmt: str = Field(
         "%Y%m%d",
         description="Format of dates contained in s3 HRES folder",
     )
 
-    #@root_validator(pre=True)
-    #def check_input_file_path(cls, values):
-    #    """Validator to ensure that input_file_path is specified."""
-    #    input_file_path = values.get('input_file_path', None)
-    #    if not input_file_path or input_file_path.strip() == "":
-    #        raise ValueError("input_file_path must be specified in the configuration file.")
-    #    return values
 
 class OutputOptions(BaseModel, extra="forbid"):
     """Options specifying input datasets for workflow."""
@@ -90,10 +71,12 @@ class OutputOptions(BaseModel, extra="forbid"):
 
     output_heights: Optional[List[float]] = Field(
         default=list(reversed(LEVELS_137_HEIGHTS)),
-        description=("Output height level to hydrostatic and wet delay,"
-                     " default: HRES native 145 height levels."),
+        description=(
+            "Output height level to hydrostatic and wet delay,"
+            " default: HRES native 145 height levels."
+        ),
     )
-    
+
     chunk_size: tuple[int, int, int, int] = Field(
         (1, 8, 512, 512),
         description="Ouput chunks (time, height, lat, lon).",
@@ -101,54 +84,54 @@ class OutputOptions(BaseModel, extra="forbid"):
 
     compression_kwargs: Optional[Dict[str, Any]] = Field(
         default_factory=lambda: DEFAULT_ENCODING_OPTIONS,
-    description="Product output compression options for netcdf", 
+        description="Product output compression options for netcdf",
     )
 
-    product_version : str = Field(
-       PRODUCT_VERSION,
-       description="OPERA TROPO product version", 
+    product_version: str = Field(
+        PRODUCT_VERSION,
+        description="OPERA TROPO product version",
     )
 
-    model_config = ConfigDict(extra="forbid", validate_default=True)
+    def get_output_filename(self, date: str | datetime, hour: str | int):
+        """Get product output filename convention."""
+        # Ensure date is a string in the expected format
+        if isinstance(date, datetime):
+            date = date.strftime("%Y%m%d")
 
-    def get_output_filename(self, date:str, hour:str | int):
-        """
-        Get product output filename convention
-        Product level spec: https://www.earthdata.nasa.gov/learn/earth-observation-data-basics/data-processing-levels
-        """
+        # Ensure hour is a string
+        hour = str(hour).zfill(2)
 
-        date_time = datetime.strptime(f"{date}T{hour}", '%Y%m%dT%H')
-        date_time = date_time.strftime(self.date_fmt)
-        proc_datetime = self.creation_time.strftime(self.date_fmt) 
-        return f"OPERA_L4_TROPO_Z_{date_time}Z_{proc_datetime}Z_HRES_v{self.product_version}.nc"
+        # Parse date and hour into datetime format
+        date_time = datetime.strptime(f"{date}T{hour}", "%Y%m%dT%H")
+
+        # Format output datetime strings
+        date_time_str = date_time.strftime(self.date_fmt)
+        proc_datetime = self.creation_time.strftime(self.date_fmt)
+
+        datetime_str = f"{date_time_str}Z_{proc_datetime}Z"
+        return f"OPERA_L4_TROPO-ZENITH_{datetime_str}_HRES_v{self.product_version}.nc"
+
 
 class WorkerSettings(BaseModel, extra="forbid"):
     """Settings for controlling CPU settings and parallelism."""
+
     n_workers: int = Field(
         4,
         ge=1,
-        description=(
-            "Number of workers to use in dask.Client."
-        ), 
+        description=("Number of workers to use in dask.Client."),
     )
     threads_per_worker: int = Field(
         2,
         ge=1,
-        description=(
-            "Number of threads to use per worker in dask.Client"
-        ),
+        description=("Number of threads to use per worker in dask.Client"),
     )
     max_memory: int | str = Field(
-        default='16GB',
-        description=(
-            "Workers are given a target memory limit in dask.Client"
-        ),
+        default="16GB",
+        description=("Workers are given a target memory limit in dask.Client"),
     )
     dask_temp_dir: str | Path = Field(
-        'tmp',
-        description=(
-            "Dask local spill directory."
-        ),
+        "tmp",
+        description=("Dask local spill directory."),
     )
     block_shape: tuple[int, int] = Field(
         (128, 256),
@@ -156,7 +139,7 @@ class WorkerSettings(BaseModel, extra="forbid"):
     )
 
 
-class TropoWorkflow(YamlModel,  extra="forbid"):
+class TropoWorkflow(YamlModel, extra="forbid"):
     """Troposphere delay calculation configuration models."""
 
     # Paths to input/output files
