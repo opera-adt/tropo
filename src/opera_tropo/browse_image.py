@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-import cmap
-import xarray as xr
-import matplotlib.pyplot as plt
 from os import PathLike
+from typing import TYPE_CHECKING, Union
+
+import cmap
+import matplotlib.pyplot as plt
 import numpy as np
+import xarray as xr
 from numpy.typing import ArrayLike
 from scipy import ndimage
-from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from builtins import ellipsis
@@ -21,6 +22,7 @@ PathOrStr = Union[str, PathLikeStr]
 Filename = PathOrStr
 
 DEFAULT_CMAP = cmap.Colormap("arctic_r").to_mpl()
+
 
 def _resize_to_max_pixel_dim(arr: ArrayLike, max_dim_allowed=2048) -> np.ndarray:
     """Scale shape of a given array."""
@@ -54,6 +56,7 @@ def make_browse_image_from_arr(
     arr = _resize_to_max_pixel_dim(arr, max_dim_allowed)
     _save_to_disk_as_color(arr, output_filename, cmap, vmin, vmax)
 
+
 def make_browse_image_from_nc(
     output_filename: Filename,
     input_filename: Filename,
@@ -64,14 +67,13 @@ def make_browse_image_from_nc(
     height: float = 800,
 ) -> None:
     """Create a PNG browse image for the output product from product in NetCDF file."""
-
     # Extract ZTD at zero height for browse image
     with xr.open_dataset(input_filename) as ds:
-        wet = ds.wet_delay.isel(time=0).sel(height=0).data 
-        hydrostatic = ds.hydrostatic_delay.isel(time=0).sel(height=height, method='nearest').data
+        wet = ds.wet_delay.isel(time=0).sel(height=0).data
+        hydrostatic = (
+            ds.hydrostatic_delay.isel(time=0).sel(height=height, method="nearest").data
+        )
 
     ztd = wet + hydrostatic
 
-    make_browse_image_from_arr(
-        output_filename, ztd,  max_dim_allowed, cmap, vmin, vmax
-    )
+    make_browse_image_from_arr(output_filename, ztd, max_dim_allowed, cmap, vmin, vmax)

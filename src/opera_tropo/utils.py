@@ -1,39 +1,52 @@
 from __future__ import annotations
 
-import xarray as xr
-import numpy as np
 import resource
 import sys
 
+import numpy as np
+import xarray as xr
+
+
 # This is obsolete
 def get_chunks_indices(xr_array: xr.Dataset) -> list:
-    """
-    Get the indices for chunked slices of an xarray Dataset.
+    """Retrieve indices for chunked slices of an xarray Dataset.
 
-    Parameters:
-        xr_array (xr.Dataset): The input xarray Dataset.
+    This function returns a list of slice objects that define the chunked
+    sections of the dataset based on its dask chunking structure.
 
-    Returns:
-        list: A list of slice objects representing the chunked slices.
+    Parameters
+    ----------
+    xr_array : xr.Dataset
+        The input xarray Dataset.
+
+    Returns
+    -------
+    list of tuple of slices
+        A list where each element is a tuple of slice objects representing
+        the chunked indices for each dimension.
 
     """
     chunks = xr_array.chunks
 
-    iy, ix = chunks['latitude'], chunks['longitude']
+    iy, ix = chunks["latitude"], chunks["longitude"]
 
     idx = [sum(ix[:i]) for i in range(len(ix) + 1)]
     idy = [sum(iy[:i]) for i in range(len(iy) + 1)]
 
     slices = []
 
-    for i in range(len(idy) - 1):      # Y-axis slices for idy
+    for i in range(len(idy) - 1):  # Y-axis slices for idy
         for j in range(len(idx) - 1):  # X-axis slices for idx
             # Create a slice using the ranges of idt, idy, and idx
-            slice_ = dict(time=np.s_[:], level=np.s_[:],
-                          latitude=np.s_[idy[i]:idy[i + 1]],
-                          longitude=np.s_[idx[j]:idx[j + 1]])
+            slice_ = {
+                "time": np.s_[:],
+                "level": np.s_[:],
+                "latitude": np.s_[idy[i] : idy[i + 1]],
+                "longitude": np.s_[idx[j] : idx[j + 1]],
+            }
             slices.append(slice_)
     return slices
+
 
 def get_max_memory_usage(units: str = "GB", children: bool = True) -> float:
     """Get the maximum memory usage of the current process.
@@ -82,13 +95,29 @@ def get_max_memory_usage(units: str = "GB", children: bool = True) -> float:
 
     return max_mem / factor
 
+
 def get_hres_datetime(file_path: str):
+    """Extract high-resolution date and hour from an xarray Dataset.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the dataset file.
+
+    Returns
+    -------
+    tuple[str, int]
+        A tuple containing the date in 'YYYYMMDD' format
+        and the hour as an integer.
+
+    """
     with xr.open_dataset(file_path) as ds:
-        hres_date = ds.time.dt.date.data[0].strftime('%Y%m%d')
+        hres_date = ds.time.dt.date.data[0].strftime("%Y%m%d")
         hres_hour = ds.time.dt.hour.data[0]
     return hres_date, hres_hour
 
-# Round_mantissa function from 
+
+# Round_mantissa function from
 # https://github.com/isce-framework/dolphin/blob/ee4271fa6e085168587cb96f977b1617a75304e1/src/dolphin/io/_utils.py#L244
 def round_mantissa(z: np.ndarray, keep_bits=10):
     """Zero out mantissa bits of elements of array in place.
@@ -145,7 +174,26 @@ def round_mantissa(z: np.ndarray, keep_bits=10):
     b += ((b >> maskbits) & 1) + half_quantum1
     b &= mask
 
+
 def round_mantissa_xr(data, keep_bits=10):
+    """Round the mantissa of a floating-point xarray DataArray.
+
+    This function modifies only floating-point arrays, ensuring that integer
+    arrays (e.g., spatial reference data) remain unchanged.
+
+    Parameters
+    ----------
+    data : xr.DataArray
+        The input xarray DataArray.
+    keep_bits : int, optional
+        The number of bits to keep in the mantissa (default is 10).
+
+    Returns
+    -------
+    xr.DataArray
+        The processed DataArray with rounded mantissa for floating-point values.
+
+    """
     # Ensure processing only happens for floating-point arrays
     #  Skip int, e.g. spatial_ref in data_var gives error
     if np.issubdtype(data.dtype, np.floating):

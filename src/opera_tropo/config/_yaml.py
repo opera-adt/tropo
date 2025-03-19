@@ -11,8 +11,8 @@ from pydantic import BaseModel
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
 
-
 Filename = Union[str, PathLike]
+
 
 class YamlModel(BaseModel):
     """Pydantic model that can be exported to yaml."""

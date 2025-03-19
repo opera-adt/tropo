@@ -1,13 +1,11 @@
-###### DEVELOPEMENT STAGE ############
 from pathlib import Path
-from typing import Any, ClassVar, List, Optional, Union
+from typing import ClassVar, Optional
+
 from pydantic import ConfigDict, Field
 
 from ._yaml import YamlModel
-from .runconfig import  (WorkerSettings, 
-                         InputOptions, 
-                         OutputOptions, 
-                         TropoWorkflow)
+from .runconfig import InputOptions, OutputOptions, TropoWorkflow, WorkerSettings
+
 
 class PrimaryExecutable(YamlModel):
     """Group describing the primary executable."""
@@ -23,7 +21,7 @@ class ProductPathGroup(YamlModel):
     """Group describing the product paths."""
 
     product_path: Path = Field(
-        default=Path("."),
+        default=Path(),
         description="Directory where PGE will place results",
     )
     scratch_path: Path = Field(
@@ -63,7 +61,7 @@ class RunConfig(YamlModel):
         default=Path("output/opera_tropo_workflow.log"),
         description="Path to the output log file in addition to logging to stderr.",
     )
-    #model_config = ConfigDict(extra="forbid")
+    # model_config = ConfigDict(extra="forbid")
 
     @classmethod
     def model_construct(cls, **kwargs):
@@ -86,10 +84,10 @@ class RunConfig(YamlModel):
         # TropoWorkflow are the input files,
         # the output directory, and the scratch directory.
 
-        #input_file = (self.input_file_group.input_file_group.input_file_path
+        # input_file = (self.input_file_group.input_file_group.input_file_path
         scratch_directory = self.product_path_group.scratch_path
         output_directory = self.product_path_group.output_path
-        tmp_directory = Path(scratch_directory) / 'tmp'
+        tmp_directory = Path(scratch_directory) / "tmp"
         tmp_directory.mkdir(parents=True, exist_ok=True)
         worker_settings = self.worker_settings.copy()
         worker_settings.dask_temp_dir = str(tmp_directory)
@@ -104,5 +102,4 @@ class RunConfig(YamlModel):
             # These ones directly translate
             worker_settings=worker_settings.__dict__,
             log_file=self.log_file,
-            )
-    
+        )
