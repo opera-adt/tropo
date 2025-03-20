@@ -3,16 +3,11 @@ src/opera_tropo/_version.py
 
 .DS_Store
 
-docs/reference
-
-# Testing data dir
-data/
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.pyc 
+*.pyc
 
 # C extensions
 *.so
