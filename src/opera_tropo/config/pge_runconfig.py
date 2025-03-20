@@ -102,4 +102,4 @@ class RunConfig(YamlModel):
             # These ones directly translate
             worker_settings=worker_settings.__dict__,
             log_file=self.log_file,
-        )
+        )  # type: ignore
