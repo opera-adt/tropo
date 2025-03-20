@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   docker-build:
-    name: Build, Test & Publish Docker Image
+    name: Build & Publish Docker Image
     runs-on: ubuntu-latest
 
     steps:
@@ -31,7 +31,7 @@ jobs:
         id: set_image_tag
         run: |
           IMAGE_TAG="ghcr.io/${{ github.repository_owner }}/opera_tropo"
-          
+
           # Check if the event is a tag push
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             VERSION_TAG="${GITHUB_REF##*/}"  # Extract version tag

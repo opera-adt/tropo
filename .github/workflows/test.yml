@@ -1,0 +1,37 @@
+name: Pytest
+
+on: [pull_request, push]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+env:
+  # https://github.com/pytest-dev/pytest/issues/2042#issuecomment-429289164
+  PY_IGNORE_IMPORTMISMATCH: 1
+
+jobs:
+  pytest:
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+      - uses: actions/checkout@v4
+
+      - name: Setup environment
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: opera_tropo
+          environment-file: environment.yml
+          create-args: >-
+            python=${{ matrix.python-version }}
+
+
+      - name: Pytest in conda environment
+        shell: bash -l {0}
+        run: |
+          python -m pip install --no-deps .
+          pytest .
