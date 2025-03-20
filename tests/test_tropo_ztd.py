@@ -20,7 +20,7 @@ def test_wet_delay(load_input_model, load_golden_output):
     # Take into account manitssa rounding
     keep_bits = TropoProducts().wet_delay.keep_bits
     golden_out = _rounding_mantissa_blocks(
-        golden_out.astype(np.float32), keep_bits=keep_bits
+        golden_out.astype(np.float32), keep_bits=int(keep_bits)
     )
 
     assert_allclose(out_ds.wet_delay, golden_out.wet_ztd)
@@ -40,7 +40,7 @@ def test_hydrostatic_delay(load_input_model, load_golden_output):
     # Take into account manitssa rounding
     keep_bits = TropoProducts().hydrostatic_delay.keep_bits
     golden_out = _rounding_mantissa_blocks(
-        golden_out.astype(np.float32), keep_bits=keep_bits
+        golden_out.astype(np.float32), keep_bits=int(keep_bits)
     )
 
     assert_allclose(out_ds.hydrostatic_delay, golden_out.hydrostatic_ztd)
