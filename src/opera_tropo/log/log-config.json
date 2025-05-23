@@ -40,6 +40,13 @@
             "handlers": [
                 "stderr"
             ]
+        },
+        "RAiDER": {
+            "level": "INFO",
+            "handlers": [
+                "stderr"
+            ],
+            "propagate": false
         }
     }
 }

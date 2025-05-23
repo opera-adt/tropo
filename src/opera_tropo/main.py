@@ -4,17 +4,17 @@ import logging
 from pathlib import Path
 
 from RAiDER import __version__ as raider_version
-from RAiDER.logger import logger as raider_log
 
 from opera_tropo import __version__
 from opera_tropo.browse_image import make_browse_image_from_nc
 from opera_tropo.config import pge_runconfig, runconfig
-from opera_tropo.log.loggin_setup import log_runtime, setup_logging
+from opera_tropo.log.loggin_setup import log_runtime, remove_raider_logs, setup_logging
 from opera_tropo.run import tropo
 from opera_tropo.utils import get_hres_datetime, get_max_memory_usage
 
 # Logger setup
 logger = logging.getLogger(__name__)
+remove_raider_logs()
 
 
 @log_runtime
@@ -65,13 +65,6 @@ def run(
         compression_options=cfg.output_options.compression_kwargs,  # type: ignore
         temp_dir=cfg.worker_settings.dask_temp_dir,  # type: ignore
     )
-
-    # Remove RAIDER empty log files
-    # NOTE: not succeded in supressing it with logging
-    for handler in raider_log.handlers:
-        if isinstance(handler, logging.FileHandler):
-            logger.debug(f" Removing RAIDER logs: {handler.baseFilename}")
-            Path(handler.baseFilename).unlink(missing_ok=True)
 
     # Generate output browse image
     logger.info(f" Output file: {Path(cfg.output_directory) / output_filename}")

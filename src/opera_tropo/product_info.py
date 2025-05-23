@@ -8,6 +8,10 @@ import numpy as np
 from numpy.typing import DTypeLike
 from RAiDER import __version__
 
+from opera_tropo.log.loggin_setup import remove_raider_logs
+
+remove_raider_logs()
+
 GLOBAL_ATTRS = {
     # http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#standard-name
     "Conventions": "CF-1.8",

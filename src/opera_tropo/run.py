@@ -13,9 +13,12 @@ from dask.distributed import Client
 from opera_tropo._pack import pack_ztd
 from opera_tropo.checks import validate_input
 from opera_tropo.core import calculate_ztd
+from opera_tropo.log.loggin_setup import remove_raider_logs
 
 try:
     from RAiDER.models.model_levels import A_137_HRES, LEVELS_137_HEIGHTS
+
+    remove_raider_logs()
 except ImportError as e:
     raise ImportError(f"RAiDER is not properly installed or accessible. Error: {e}")
 

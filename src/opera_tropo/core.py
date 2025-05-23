@@ -6,9 +6,10 @@ import xarray as xr
 from RAiDER.models import HRES
 
 from opera_tropo._pack import pack_ztd
-from opera_tropo.log.loggin_setup import log_runtime
+from opera_tropo.log.loggin_setup import log_runtime, remove_raider_logs
 
 logger = logging.getLogger(__name__)
+remove_raider_logs()
 
 
 def get_ztd(
