@@ -29,11 +29,7 @@ GLOBAL_ATTRS = {
         "OPERA One-way Tropospheric Zenith-integrated Delay"
         " for Synthetic Aperture Radar"
     ),
-    "comment": (
-        "Intersect/interpolate"
-        " with DEM, project to slant range and multiple with "
-        "-4pi/radar wavelength (2 way) to get SAR correction"
-    ),
+    "comment": "Intersect/interpolate with DEM to get SAR correction",
     "software": "RAiDER",
     "software_version": f"{__version__}",
     "reference_document": "TBD",
