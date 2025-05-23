@@ -26,8 +26,7 @@ GLOBAL_ATTRS = {
     "references": "https://raider.readthedocs.io/en/latest/",
     "mission_name": "OPERA",
     "description": (
-        "OPERA One-way Tropospheric Zenith-integrated Delay"
-        " for Synthetic Aperture Radar"
+        "OPERA Tropospheric Zenith-integrated Delay for Synthetic Aperture Radar"
     ),
     "comment": "Intersect/interpolate with DEM to get SAR correction",
     "software": "RAiDER",
@@ -149,7 +148,7 @@ class TropoProducts:
         default_factory=lambda: ProductInfo(
             name="wet_delay",
             long_name="Zenith Wet Delay",
-            description=("One-way Zenith-integrated Wet Delay."),
+            description=("Zenith-integrated Wet Delay."),
             fillvalue=9.96921e36,
             missing_value=9.96921e36,
             # Note sure should I keep grid_mapping here
@@ -165,7 +164,7 @@ class TropoProducts:
         default_factory=lambda: ProductInfo(
             name="hydrostatic_delay",
             long_name="Zenith Hydrostatic Delay",
-            description=("One-way Zenith-integrated Wet Delay."),
+            description=("Zenith-integrated Wet Delay."),
             fillvalue=9.96921e36,
             missing_value=9.96921e36,
             # Note sure should I keep grid_mapping here
