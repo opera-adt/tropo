@@ -1,7 +1,7 @@
 import click
 
 from .config import run_create_config
-from .download import download
+from .download import download, list_dates
 from .make_browse import make_browse
 from .run import run_cli
 from .validate import validate
@@ -19,6 +19,7 @@ def cli_app(ctx: click.Context, debug: bool) -> None:
 
 
 cli_app.add_command(download)
+cli_app.add_command(list_dates)
 cli_app.add_command(run_create_config)
 cli_app.add_command(run_cli)
 cli_app.add_command(validate)
