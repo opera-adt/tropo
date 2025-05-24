@@ -18,6 +18,7 @@ def create_config(
     worker_memory: int | str = "8GB",
     block_shape: tuple[int, int] = (128, 128),
     log_file: str = "tropo_run.log",
+    keep_relative_paths: bool = False,
 ) -> None:
     """Generate and save a run configuration file for tropospheric processing."""
     config_path = Path(config_path).resolve()
@@ -26,15 +27,26 @@ def create_config(
         raise ValueError("config_path must be a YAML file (e.g., runconfig.yaml)")
 
     runconfig = pge_runconfig.RunConfig()
-    runconfig.input_file.input_file_path = Path(input_file).resolve()
-    runconfig.output_options.max_height = max_height
-    runconfig.product_path_group.scratch_path = Path(output_dir).resolve()
 
+    input_file_path = Path(input_file)
+    output_dir_path = Path(output_dir)
+    log_file_path = Path(log_file)
+
+    if not keep_relative_paths:
+        input_file_path = input_file_path.resolve()
+        output_dir_path = output_dir_path.resolve()
+        log_file_path = output_dir_path / log_file_path
+
+    runconfig.input_file.input_file_path = input_file_path
+    runconfig.output_options.max_height = max_height
+    runconfig.product_path_group.scratch_path = output_dir_path
     runconfig.worker_settings.n_workers = n_workers
     runconfig.worker_settings.threads_per_worker = n_threads
     runconfig.worker_settings.max_memory = worker_memory
     runconfig.worker_settings.block_shape = block_shape
-    runconfig.log_file = Path(output_dir).resolve() / log_file
+    runconfig.log_file = (
+        log_file_path if keep_relative_paths else output_dir_path / log_file_path.name
+    )
 
     runconfig.to_yaml(config_path)
 
@@ -77,6 +89,11 @@ def create_config(
     help="Block shape for worker processing.",
 )
 @click.option("--log", type=str, default="run_tropo.log", help="Log filename")
+@click.option(
+    "--keep-relative-paths/--no-keep-relative-paths",
+    default=True,
+    help="Keep paths relative in the config instead of resolving to absolute",
+)
 def run_create_config(
     config_file: Path,
     tropo_input: Path,
@@ -85,6 +102,7 @@ def run_create_config(
     worker_settings: tuple[int, int, int],
     chunks: tuple[int, int],
     log: str,
+    keep_relative_paths: bool,
 ) -> None:
     """CLI wrapper to create a tropospheric runconfig file."""
     create_config(
@@ -97,4 +115,5 @@ def run_create_config(
         worker_memory=f"{worker_settings[2]}GB",
         block_shape=chunks,
         log_file=log,
+        keep_relative_paths=keep_relative_paths,
     )

@@ -132,8 +132,6 @@ class HRESDownloader:
             with open(output_file, "w") as f:
                 for line in lines:
                     f.write(f"{line}\n")
-        else:
-            print(f"Number of Dates: {len(matching_keys)}")
 
         return matching_keys
 

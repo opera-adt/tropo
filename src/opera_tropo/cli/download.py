@@ -5,6 +5,7 @@ from typing import Optional
 import click
 
 from opera_tropo.download import HRES_HOURS
+from opera_tropo.log.loggin_setup import setup_logging
 
 __all__ = ["download", "list_dates"]
 
@@ -25,7 +26,9 @@ click.option = functools.partial(click.option, show_default=True)
 @click.option(
     "--version", type=int, default=1, help="Version number of the model (default: 1)"
 )
+@click.pass_context
 def download(
+    ctx: click.Context,
     output_dir: Path,
     s3_bucket: str,
     date: Optional[str],
@@ -40,6 +43,13 @@ def download(
             "Both --date and --hour must be specified to download a file."
         )
 
+    debug = ctx.obj.get("debug", False)
+    setup_logging(
+        logger_name="opera_tropo",
+        debug=debug,
+        filename="",
+    )
+
     client = HRESDownloader(s3_bucket=s3_bucket)
     client.download_hres(output_dir, date, hour, version)
 
@@ -51,11 +61,23 @@ def download(
 @click.option(
     "--output-file", type=Path, help="Path to write results instead of stdout"
 )
+@click.pass_context
 def list_dates(
-    s3_bucket: str, start_date: str, end_date: str, output_file: Optional[Path]
+    ctx: click.Context,
+    s3_bucket: str,
+    start_date: str,
+    end_date: str,
+    output_file: Optional[Path],
 ):
     """List available HRES files in an S3 bucket between two dates (YYYYMMDD)."""
     from opera_tropo.download import HRESDownloader
+
+    debug = ctx.obj.get("debug", False)
+    setup_logging(
+        logger_name="opera_tropo",
+        debug=debug,
+        filename="",
+    )
 
     client = HRESDownloader(s3_bucket=s3_bucket)
     client.list_matching_keys(
