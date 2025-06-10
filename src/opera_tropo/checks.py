@@ -13,8 +13,8 @@ EXPECTED_VARS = frozenset(["z", "t", "q", "lnsp"])
 
 # Valid range with a buffer
 VALID_RANGE = {
-    "t": [160, 350],  # Temperature (K)
-    "q": [1e-10, 0.05],  # Specific humidity (kg/kg)
+    "t": [100, 350],  # Temperature (K)
+    "q": [-1e-3, 0.05],  # Specific humidity (kg/kg)
     "z": [-5000, 65000],  # Geopotential (m²/s²)
     "lnsp": [10, 12],  # Log of surface pressure (unitless)
 }
