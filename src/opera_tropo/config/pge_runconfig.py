@@ -33,7 +33,7 @@ class ProductPathGroup(YamlModel):
         description="Path to the SAS output directory.",
         # The alias means that in the YAML file, the key will be "sas_output_path"
         # instead of "output_directory", but the python instance attribute is
-        # "output_directory" (to match DisplacementWorkflow)
+        # "output_directory"
         alias="sas_output_path",
     )
     product_version: str = Field(
