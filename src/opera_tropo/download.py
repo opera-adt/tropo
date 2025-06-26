@@ -15,7 +15,7 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 logging.getLogger("backoff").addHandler(logging.StreamHandler())
 logger = logging.getLogger(__name__)
 
-S3_HRES_BUCKET = "opera-ecmwf"  # this will change
+S3_HRES_BUCKET = "opera-ecmwf"  # not public
 HRES_HOURS = ["00", "06", "12", "18"]
 
 
