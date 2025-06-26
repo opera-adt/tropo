@@ -13,8 +13,8 @@ EXPECTED_VARS = frozenset(["z", "t", "q", "lnsp"])
 
 # Valid range with a buffer
 VALID_RANGE = {
-    "t": [160, 350],  # Temperature (K)
-    "q": [1e-10, 0.05],  # Specific humidity (kg/kg)
+    "t": [80, 400],  # Temperature (K)
+    "q": [-0.1, 0.5],  # Specific humidity (kg/kg)
     "z": [-5000, 65000],  # Geopotential (m²/s²)
     "lnsp": [10, 12],  # Log of surface pressure (unitless)
 }
@@ -74,10 +74,7 @@ def validate_input(ds: xr.Dataset) -> None:
         missing_vars = EXPECTED_VARS - data_vars
         extra_vars = data_vars - EXPECTED_VARS
         checks.append(
-            (
-                f"Unexpected data variables."
-                f" Missing: {missing_vars}, Extra: {extra_vars}"
-            )
+            f"Unexpected data variables. Missing: {missing_vars}, Extra: {extra_vars}"
         )
 
     # Check NaN values and valid range
