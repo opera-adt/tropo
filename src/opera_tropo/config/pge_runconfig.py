@@ -25,7 +25,7 @@ class ProductPathGroup(YamlModel):
         description="Directory where PGE will place results",
     )
     scratch_path: Path = Field(
-        default=Path("./scratch"),
+        default=Path(),
         description="Path to the scratch directory.",
     )
     output_path: Path = Field(
