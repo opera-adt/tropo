@@ -46,7 +46,7 @@ body:
         2.
         3.
         ...
-        For example, `dist-s1 run --mgrs_tile_id '11SLT' --post_date '2025-01-21' --track_number 71`
+        For example, `opera_tropo run runconfig.yaml`
       render: bash
   - type: textarea
     id: environment
@@ -55,6 +55,6 @@ body:
       description: "What is your environment?"
       value: |
         Please paste the output of the following:
-        `python -c "import dist_s1; print(dist_s1.__version__)"`
+        `python -c "import opera_tropo; print(opera_tropo.__version__)"`
         ...
       render: bash

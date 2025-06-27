@@ -101,3 +101,25 @@ def log_runtime(f: Callable[P, T]) -> Callable[P, T]:
         return result
 
     return wrapper
+
+
+def remove_raider_logs():
+    """Remove RAiDER's internal file handlers writing."""
+    for logger_name in logging.root.manager.loggerDict:
+        if "RAiDER" in logger_name:
+            logger = logging.getLogger(logger_name)
+            handlers_to_remove = []
+
+            for handler in logger.handlers:
+                if isinstance(handler, logging.FileHandler):
+                    filename = getattr(handler, "baseFilename", "")
+                    if filename.endswith("debug.log") or filename.endswith("error.log"):
+                        handlers_to_remove.append(handler)
+
+            for handler in handlers_to_remove:
+                logger.removeHandler(handler)
+                try:
+                    handler.close()
+                    Path(handler.baseFilename).unlink(missing_ok=True)
+                except Exception:
+                    pass  # Optionally log the error

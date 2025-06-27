@@ -8,6 +8,10 @@ import numpy as np
 from numpy.typing import DTypeLike
 from RAiDER import __version__
 
+from opera_tropo.log.loggin_setup import remove_raider_logs
+
+remove_raider_logs()
+
 GLOBAL_ATTRS = {
     # http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#standard-name
     "Conventions": "CF-1.8",
@@ -22,14 +26,9 @@ GLOBAL_ATTRS = {
     "references": "https://raider.readthedocs.io/en/latest/",
     "mission_name": "OPERA",
     "description": (
-        "OPERA One-way Tropospheric Zenith-integrated Delay"
-        " for Synthetic Aperture Radar"
+        "OPERA Tropospheric Zenith-integrated Delay for Synthetic Aperture Radar"
     ),
-    "comment": (
-        "Intersect/interpolate"
-        " with DEM, project to slant range and multiple with "
-        "-4pi/radar wavelength (2 way) to get SAR correction"
-    ),
+    "comment": "Intersect/interpolate with DEM to get SAR correction",
     "software": "RAiDER",
     "software_version": f"{__version__}",
     "reference_document": "TBD",
@@ -149,7 +148,7 @@ class TropoProducts:
         default_factory=lambda: ProductInfo(
             name="wet_delay",
             long_name="Zenith Wet Delay",
-            description=("One-way Zenith-integrated Wet Delay."),
+            description=("Zenith-integrated Wet Delay."),
             fillvalue=9.96921e36,
             missing_value=9.96921e36,
             # Note sure should I keep grid_mapping here
@@ -165,7 +164,7 @@ class TropoProducts:
         default_factory=lambda: ProductInfo(
             name="hydrostatic_delay",
             long_name="Zenith Hydrostatic Delay",
-            description=("One-way Zenith-integrated Wet Delay."),
+            description=("Zenith-integrated Wet Delay."),
             fillvalue=9.96921e36,
             missing_value=9.96921e36,
             # Note sure should I keep grid_mapping here

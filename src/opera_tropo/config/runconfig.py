@@ -11,15 +11,19 @@ from pydantic import (
     PrivateAttr,
 )
 
+from opera_tropo.log.loggin_setup import remove_raider_logs
+
 from ._yaml import YamlModel
 
 try:
     from RAiDER.models.model_levels import LEVELS_137_HEIGHTS
+
+    remove_raider_logs()
 except ImportError as e:
     raise ImportError(f"RAiDER is not properly installed or accessible. Error: {e}")
 
-
 logger = logging.getLogger(__name__)
+
 
 __all__ = [
     "InputOptions",
