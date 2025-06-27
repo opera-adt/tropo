@@ -36,7 +36,6 @@ def run(
         Default is False.
 
     """
-    # NOTE: figure how to redirct dask and RAiDER streams to logfile
     setup_logging(
         logger_name="opera_tropo", debug=debug, filename=str(cfg.log_file)
     )  # type: ignore

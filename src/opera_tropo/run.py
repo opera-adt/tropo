@@ -121,7 +121,7 @@ def tropo(
         validate_input(ds)
 
     # Clip negative humidity values
-    # due to knwon ECMWF numerical computation
+    # due to known ECMWF numerical computation
     # and interpolation artifacts
     ds["q"] = ds.q.where(ds.q >= 0, 0)
 

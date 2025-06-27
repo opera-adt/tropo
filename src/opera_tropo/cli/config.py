@@ -39,7 +39,7 @@ def create_config(
 
     runconfig.input_file.input_file_path = input_file_path
     runconfig.output_options.max_height = max_height
-    runconfig.product_path_group.scratch_path = output_dir_path
+    runconfig.product_path_group.output_path = output_dir_path
     runconfig.worker_settings.n_workers = n_workers
     runconfig.worker_settings.threads_per_worker = n_threads
     runconfig.worker_settings.max_memory = worker_memory
