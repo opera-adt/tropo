@@ -156,14 +156,18 @@ def create_config(
 
     # Create and configure runconfig
     runconfig = pge_runconfig.RunConfig(
-        input_file_path=input_file_path,
-        max_height=max_height,
-        scratch_path=work_dir_path,
-        output_path=output_dir_path,
-        n_workers=n_workers,
-        threads_per_worker=n_threads,
-        max_memory=normalized_memory,
-        block_shape=block_shape,
+        input_file={"input_file_path": input_file_path},
+        output_options={"max_height": max_height},
+        product_path_group={
+            "scratch_path": work_dir_path,
+            "sas_output_path": output_dir_path,
+        },
+        worker_settings={
+            "n_workers": n_workers,
+            "threads_per_worker": n_threads,
+            "max_memory": normalized_memory,
+            "block_shape": block_shape,
+        },
         log_file=log_file_path,
     )
 
