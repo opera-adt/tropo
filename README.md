@@ -91,11 +91,22 @@ pytest
 
 To build the docker image, run:
 ```bash
-docker build -f Dockerfile -t opera_tropo .
+docker build -f docker/Dockerfile -t opera_tropo .
 ```
 which will print out instructions for running the image.
 
 or
 ```bash
 ./docker/build-docker-image.sh --tag my-tag
+```
+#### Running the docker image
+Run the built docker image with:
+```
+docker run \
+  --rm \
+  --user $(id -u):$(id -g) \
+  --volume <local host directory>:/home/ops \
+  opera/tropo:latest \
+  opera_tropo run runconfig.yaml
+
 ```
