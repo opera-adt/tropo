@@ -266,11 +266,12 @@ def run_create_config(
     parameters for tropospheric processing, including input/output paths,
     worker settings, and processing parameters.
     """
+    print(config_file.parent.name)
     try:
         config_path = create_config(
             input_file=tropo_input,
             output_dir=tropo_output,
-            work_dir=config_file.parent,
+            work_dir=config_file.parent.relative_to(Path.cwd()),
             config_name=config_file.name,
             max_height=max_height,
             n_workers=n_workers,
@@ -284,8 +285,8 @@ def run_create_config(
         click.echo(f"Configuration file created: {config_path}")
 
     except (FileNotFoundError, ValueError, PermissionError) as e:
-        click.echo(f"✗ Error: {e}", err=True)
+        click.echo(f"Error: {e}", err=True)
         raise click.Abort()
     except Exception as e:
-        click.echo(f"✗ Unexpected error: {e}", err=True)
+        click.echo(f"Unexpected error: {e}", err=True)
         raise click.Abort()
