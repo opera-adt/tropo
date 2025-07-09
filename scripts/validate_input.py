@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Weather Data Analysis Tool
-A comprehensive tool for analyzing weather data from NetCDF files stored in S3.
+for analyzing weather data from NetCDF files stored in S3.
 """
 
 import argparse
@@ -139,7 +139,7 @@ class WeatherDataAnalyzer:
     def _compute_statistics(
         self, data: xr.DataArray, var: str, config: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Compute comprehensive statistics for a variable."""
+        """Compute statistics for a variable."""
         stats = {
             f"{var}_min": data.min(),
             f"{var}_max": data.max(),
@@ -394,7 +394,7 @@ STATISTICAL SUMMARY:
 
             for _, row in summary_df.iterrows():
                 status = (
-                    "✅ No issues detected"
+                    "No issues detected"
                     if row["Data_Quality"] == "OK"
                     else row["Data_Quality"]
                 )
