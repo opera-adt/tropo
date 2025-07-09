@@ -106,7 +106,7 @@ docker run \
   --rm \
   --user $(id -u):$(id -g) \
   --volume <local host directory>:/home/ops \
-  opera/tropo:latest \
+  opera_tropo:latest \
   opera_tropo run runconfig.yaml
 
 ```
