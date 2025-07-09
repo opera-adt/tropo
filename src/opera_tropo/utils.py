@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import resource
 import sys
+from pathlib import Path
 
 import numpy as np
 import xarray as xr
@@ -96,12 +97,12 @@ def get_max_memory_usage(units: str = "GB", children: bool = True) -> float:
     return max_mem / factor
 
 
-def get_hres_datetime(file_path: str):
+def get_hres_datetime(file_path: Path):
     """Extract high-resolution date and hour from an xarray Dataset.
 
     Parameters
     ----------
-    file_path : str
+    file_path : Path
         Path to the dataset file.
 
     Returns
@@ -111,10 +112,15 @@ def get_hres_datetime(file_path: str):
         and the hour as an integer.
 
     """
-    with xr.open_dataset(file_path) as ds:
-        hres_date = ds.time.dt.date.data[0].strftime("%Y%m%d")
-        hres_hour = ds.time.dt.hour.data[0]
-    return hres_date, hres_hour
+    if not file_path.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
+    try:
+        with xr.open_dataset(file_path) as ds:
+            hres_date = ds.time.dt.date.data[0].strftime("%Y%m%d")
+            hres_hour = ds.time.dt.hour.data[0]
+        return hres_date, hres_hour
+    except (OSError, IOError) as file_error:
+        raise ValueError(f"Cannot open file {file_path}: {file_error}")
 
 
 # Round_mantissa function from

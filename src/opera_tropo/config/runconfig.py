@@ -32,7 +32,7 @@ __all__ = [
     "TropoWorkflow",
 ]
 
-PRODUCT_VERSION = "0.2"
+PRODUCT_VERSION = "1.0"
 DEFAULT_ENCODING_OPTIONS = {"zlib": True, "complevel": 5, "shuffle": True}
 
 
@@ -134,7 +134,7 @@ class WorkerSettings(BaseModel, extra="forbid"):
         description="Workers are given a target memory limit in dask.Client.",
     )
     dask_temp_dir: str | Path = Field(
-        "tmp",
+        default="tmp",
         description=("Dask local spill directory within work directory."),
     )
     block_shape: tuple[int, int] = Field(

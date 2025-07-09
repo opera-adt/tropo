@@ -107,7 +107,7 @@ def tropo(
 
     # Open the dataset
     try:
-        ds = xr.open_dataset(file_path, chunks={"level": -1})
+        ds = xr.open_dataset(file_path, chunks={"level": -1}, engine="h5netcdf")
     except Exception:
         raise ValueError(
             f"Failed to open the dataset file: {file_path}."

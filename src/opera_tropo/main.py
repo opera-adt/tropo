@@ -47,7 +47,8 @@ def run(
     logger.debug(f"Work directory: {cfg.work_directory}")
 
     # Get output filename
-    hres_date, hres_hour = get_hres_datetime(cfg.input_options.input_file_path)  # type: ignore
+    logger.info(f"Input: {cfg.input_options.input_file_path}")
+    hres_date, hres_hour = get_hres_datetime(Path(cfg.input_options.input_file_path))  # type: ignore
     output_filename = cfg.output_options.get_output_filename(hres_date, hres_hour)
 
     # Run troposphere workflow

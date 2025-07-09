@@ -20,6 +20,7 @@ class PrimaryExecutable(YamlModel):
 class ProductPathGroup(YamlModel):
     """Group describing the product paths."""
 
+    # NOTE: product path is not used
     product_path: Path = Field(
         default=Path(),
         description="Directory where PGE will place results",
