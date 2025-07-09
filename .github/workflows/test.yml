@@ -27,7 +27,6 @@ jobs:
         with:
           environment-name: opera_tropo
           environment-file: conda-env.yml
-          generate-run-shell: true
           create-args: >-
             python=${{ matrix.python-version }}
 
