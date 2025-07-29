@@ -118,12 +118,7 @@ def tropo(
     # Validate input, check valid range,
     #  nan values and exp. var and coords
     if pre_check:
-        validate_input(ds)
-
-    # Clip negative humidity values
-    # due to known ECMWF numerical computation
-    # and interpolation artifacts
-    ds["q"] = ds.q.where(ds.q >= 0, 0)
+        ds = validate_input(ds)
 
     # Rechunk for parallel processing
     logger.debug(f"Rechunking {file_path}")

@@ -1,0 +1,14 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore tests
+tests
+
+# Ignore Git and other VCS
+.git/
+.gitignore
+
+# Ignore editor config
+.vscode/
+*.swp
