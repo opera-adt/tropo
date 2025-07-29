@@ -187,8 +187,12 @@ def validate_input(ds: xr.Dataset) -> xr.Dataset:
     for var in vars_out.keys():
         if vars_out[var][0] < VALID_RANGE[var][0]:
             logger.info(f"Clipping {var} below {VALID_RANGE[var][0]}")
-            ds[var] = ds[var].where(ds[var] >= VALID_RANGE[var][0], VALID_RANGE[var][0])
+            ds[var] = ds[var].where(
+                ds[var] >= VALID_RANGE[var][0], VALID_RANGE[var][0] + 1e-5
+            )
         if vars_out[var][1] > VALID_RANGE[var][1]:
             logger.info(f"Clipping {var} above {VALID_RANGE[var][1]}")
-            ds[var] = ds[var].where(ds[var] <= VALID_RANGE[var][1], VALID_RANGE[var][1])
+            ds[var] = ds[var].where(
+                ds[var] <= VALID_RANGE[var][1], VALID_RANGE[var][1] - 1e-5
+            )
     return ds

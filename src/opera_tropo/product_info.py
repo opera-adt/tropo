@@ -6,7 +6,6 @@ from typing import Optional
 
 import numpy as np
 from numpy.typing import DTypeLike
-from RAiDER import __version__
 
 from opera_tropo.log.loggin_setup import remove_raider_logs
 
@@ -30,7 +29,7 @@ GLOBAL_ATTRS = {
     ),
     "comment": "Intersect/interpolate with DEM to get SAR correction",
     "software": "RAiDER",
-    "software_version": f"{__version__}",
+    "software_version": "JPL D-108783",
     "reference_document": "TBD",
     # Audit trail. date/time 0f day/ user name/ program name/command arguments
     "history": f"Created on: {str(datetime.now(timezone.utc))}",
