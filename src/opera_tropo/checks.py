@@ -80,6 +80,7 @@ def check_coords_and_variables(ds: xr.Dataset) -> None:
 def check_nans_valid_range(ds: xr.Dataset) -> dict[str, list[float]]:
     """Check for NaNs and validate data ranges for key variables."""
     issues: list[str] = []
+    nan_issues: list[str] = []
     out_range_vars: dict[str, list[float]] = {}
 
     for var in EXPECTED_VARS:
@@ -113,12 +114,12 @@ def check_nans_valid_range(ds: xr.Dataset) -> dict[str, list[float]]:
             else:
                 logger.info(
                     f'   Variable "{var}" stats:'
-                    f"min = {min_val:.5f}, max = {max_val:.5f}, NaNs = {nan_count}"
+                    f" min = {min_val:.5f}, max = {max_val:.5f}, NaNs = {nan_count}"
                 )
 
             # Append issue if NaNs exist
             if nan_count > 0:
-                issues.append(
+                nan_issues.append(
                     f'Data Variable "{var}" ({var_name}) contains {nan_count} NaNs.'
                 )
 
@@ -135,6 +136,8 @@ def check_nans_valid_range(ds: xr.Dataset) -> dict[str, list[float]]:
 
     if issues:
         raise ValidationError("Failed validation checks:\n" + "\n".join(issues))
+    if nan_issues:
+        logger.warning(nan_issues)
 
     return out_range_vars
 
@@ -183,16 +186,25 @@ def validate_input(ds: xr.Dataset) -> xr.Dataset:
     logger.info("  Checking nans and data valid range.")
     vars_out = check_nans_valid_range(ds)
 
-    # Clipping value outside of predifiend range
-    for var in vars_out.keys():
-        if vars_out[var][0] < VALID_RANGE[var][0]:
-            logger.info(f"Clipping {var} below {VALID_RANGE[var][0]}")
-            ds[var] = ds[var].where(
-                ds[var] >= VALID_RANGE[var][0], VALID_RANGE[var][0] + 1e-5
-            )
-        if vars_out[var][1] > VALID_RANGE[var][1]:
-            logger.info(f"Clipping {var} above {VALID_RANGE[var][1]}")
-            ds[var] = ds[var].where(
-                ds[var] <= VALID_RANGE[var][1], VALID_RANGE[var][1] - 1e-5
-            )
+    for var, (vmin_actual, vmax_actual) in vars_out.items():
+        vmin_valid, vmax_valid = VALID_RANGE[var]
+
+        if var == "q":
+            # Special handling for humidity: clip negatives to zero
+            if vmin_actual < 0:
+                logger.info("Clipping q below 0")
+                ds[var] = ds[var].where(ds[var] >= 0, 0)
+            # Clip above max to NaN
+            if vmax_actual > vmax_valid:
+                logger.info(f"Masking {var} above {vmax_valid}")
+                ds[var] = ds[var].where(ds[var] <= vmax_valid, np.nan)
+        else:
+            # General handling: clip outside [vmin_valid, vmax_valid] to NaN
+            if vmin_actual < vmin_valid:
+                logger.info(f"Masking {var} below {vmin_valid}")
+                ds[var] = ds[var].where(ds[var] >= vmin_valid, np.nan)
+            if vmax_actual > vmax_valid:
+                logger.info(f"Masking {var} above {vmax_valid}")
+                ds[var] = ds[var].where(ds[var] <= vmax_valid, np.nan)
+
     return ds

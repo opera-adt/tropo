@@ -29,8 +29,8 @@ GLOBAL_ATTRS = {
     ),
     "comment": "Intersect/interpolate with DEM to get SAR correction",
     "software": "RAiDER",
-    "software_version": "JPL D-108783",
-    "reference_document": "TBD",
+    "software_version": "0.5.3",
+    "reference_document": "JPL D-108783",
     # Audit trail. date/time 0f day/ user name/ program name/command arguments
     "history": f"Created on: {str(datetime.now(timezone.utc))}",
 }

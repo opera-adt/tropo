@@ -89,6 +89,21 @@ def get_ztd(
     # Compute Zenith Total Delay (ZTD)
     hres_model._getZTD()
 
+    # Mask zero values at specific height levels (often caused by remaining NaNs)
+    # Skip heights above 45km altitude where zeros might occur, especially at the top
+    zero_mask = (hres_model._hydrostatic_ztd[:, :, :-15] == 0) | (
+        hres_model._wet_ztd[:, :, :-15] == 0
+    )
+
+    if np.any(zero_mask):
+        logger.warning("Output contains NaNs, masking!")
+        hres_model._hydrostatic_ztd[:, :, :-15] = np.where(
+            zero_mask, np.nan, hres_model._hydrostatic_ztd[:, :, :-15]
+        )
+        hres_model._wet_ztd[:, :, :-15] = np.where(
+            zero_mask, np.nan, hres_model._wet_ztd[:, :, :-15]
+        )
+
     # Construct output dataset
     dims = ["latitude", "longitude", "height"]
     out_ds = xr.Dataset(
