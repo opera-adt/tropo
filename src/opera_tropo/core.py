@@ -8,7 +8,7 @@ from RAiDER.models import HRES
 from opera_tropo._pack import pack_ztd
 from opera_tropo.log.loggin_setup import log_runtime, remove_raider_logs
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opera_tropo")
 remove_raider_logs()
 
 
