@@ -118,12 +118,7 @@ def tropo(
     # Validate input, check valid range,
     #  nan values and exp. var and coords
     if pre_check:
-        validate_input(ds)
-
-    # Clip negative humidity values
-    # due to known ECMWF numerical computation
-    # and interpolation artifacts
-    ds["q"] = ds.q.where(ds.q >= 0, 0)
+        ds = validate_input(ds)
 
     # Rechunk for parallel processing
     logger.debug(f"Rechunking {file_path}")
@@ -173,6 +168,7 @@ def tropo(
     # Calculate ZTD
     model_time_str = ds.time.dt.strftime("%Y%m%dT%H").values[0]
     logger.info(f"Estimating ZTD delay for {model_time_str}.")
+
     out_ds = ds.map_blocks(
         calculate_ztd, kwargs={"out_heights": out_heights}, template=template
     )
@@ -194,5 +190,6 @@ def tropo(
     # Close dask Client and remove dask temp. spill directory
     logger.debug(f"Closing dask server: {client.dashboard_link.split('/')[2]}.")
     client.close()
-    logger.debug(f"Removing dask tmp dir: {temp_dir}")
-    shutil.rmtree(str(temp_dir))
+    if temp_dir:
+        logger.debug(f"Removing dask tmp dir: {temp_dir}")
+        shutil.rmtree(str(temp_dir))

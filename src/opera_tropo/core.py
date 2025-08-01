@@ -89,6 +89,35 @@ def get_ztd(
     # Compute Zenith Total Delay (ZTD)
     hres_model._getZTD()
 
+    # Mask zero values at specific height levels (often caused by remaining NaNs)
+    # Skip heights above 45km altitude where zeros might occur, especially at the top
+    zero_mask = (hres_model._hydrostatic_ztd[:, :, :-15] == 0) | (
+        hres_model._wet_ztd[:, :, :-15] == 0
+    )
+
+    if np.any(zero_mask):
+        zero_count = np.sum(zero_mask)
+        zero_indices = np.where(zero_mask)
+
+        # Get coordinate values
+        zero_lats = hres_model._lats[zero_indices[0], 0]
+        zero_lons = hres_model._lons[0, zero_indices[1]]
+        zero_heights = hres_model._zs[zero_indices[2]]
+
+        logger.warning(
+            f"Found {zero_count} zero values between [min, max]:"
+            f"lat=[{zero_lats.min():.2f}, {zero_lats.max():.2f}]°, "
+            f"lon=[{zero_lons.min():.2f}, {zero_lons.max():.2f}]°, "
+            f"heights=[{zero_heights.min():.0f}, {zero_heights.max():.0f}]m"
+        )
+
+        hres_model._hydrostatic_ztd[:, :, :-15] = np.where(
+            zero_mask, np.nan, hres_model._hydrostatic_ztd[:, :, :-15]
+        )
+        hres_model._wet_ztd[:, :, :-15] = np.where(
+            zero_mask, np.nan, hres_model._wet_ztd[:, :, :-15]
+        )
+
     # Construct output dataset
     dims = ["latitude", "longitude", "height"]
     out_ds = xr.Dataset(
@@ -149,7 +178,6 @@ def calculate_ztd(
         - Coordinates: 'latitude', 'longitude', 'height'.
 
     """
-    # Get ZTD from weather model dataset
     ztd_ds = get_ztd(
         lat=ds.latitude.values,
         lon=ds.longitude.values,
