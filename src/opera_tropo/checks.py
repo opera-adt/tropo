@@ -192,19 +192,19 @@ def validate_input(ds: xr.Dataset) -> xr.Dataset:
         if var == "q":
             # Special handling for humidity: clip negatives to zero
             if vmin_actual < 0:
-                logger.info("Clipping q below 0")
+                logger.info("   Clipping q below 0")
                 ds[var] = ds[var].where(ds[var] >= 0, 0)
             # Clip above max to NaN
             if vmax_actual > vmax_valid:
-                logger.info(f"Masking {var} above {vmax_valid}")
+                logger.info(f"   Masking {var} above {vmax_valid}")
                 ds[var] = ds[var].where(ds[var] <= vmax_valid, np.nan)
         else:
             # General handling: clip outside [vmin_valid, vmax_valid] to NaN
             if vmin_actual < vmin_valid:
-                logger.info(f"Masking {var} below {vmin_valid}")
+                logger.info(f"   Masking {var} below {vmin_valid}")
                 ds[var] = ds[var].where(ds[var] >= vmin_valid, np.nan)
             if vmax_actual > vmax_valid:
-                logger.info(f"Masking {var} above {vmax_valid}")
+                logger.info(f"   Masking {var} above {vmax_valid}")
                 ds[var] = ds[var].where(ds[var] <= vmax_valid, np.nan)
 
     return ds

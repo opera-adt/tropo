@@ -8,7 +8,7 @@ from RAiDER.models import HRES
 from opera_tropo._pack import pack_ztd
 from opera_tropo.log.loggin_setup import log_runtime, remove_raider_logs
 
-logger = logging.getLogger("opera_tropo")
+logger = logging.getLogger(__name__)
 remove_raider_logs()
 
 
@@ -96,7 +96,21 @@ def get_ztd(
     )
 
     if np.any(zero_mask):
-        logger.warning("Output contains NaNs, masking!")
+        zero_count = np.sum(zero_mask)
+        zero_indices = np.where(zero_mask)
+
+        # Get coordinate values
+        zero_lats = hres_model._lats[zero_indices[0], 0]
+        zero_lons = hres_model._lons[0, zero_indices[1]]
+        zero_heights = hres_model._zs[zero_indices[2]]
+
+        logger.warning(
+            f"Found {zero_count} zero values between [min, max]:"
+            f"lat=[{zero_lats.min():.2f}, {zero_lats.max():.2f}]°, "
+            f"lon=[{zero_lons.min():.2f}, {zero_lons.max():.2f}]°, "
+            f"heights=[{zero_heights.min():.0f}, {zero_heights.max():.0f}]m"
+        )
+
         hres_model._hydrostatic_ztd[:, :, :-15] = np.where(
             zero_mask, np.nan, hres_model._hydrostatic_ztd[:, :, :-15]
         )
@@ -164,7 +178,6 @@ def calculate_ztd(
         - Coordinates: 'latitude', 'longitude', 'height'.
 
     """
-    # Get ZTD from weather model dataset
     ztd_ds = get_ztd(
         lat=ds.latitude.values,
         lon=ds.longitude.values,
