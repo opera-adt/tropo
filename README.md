@@ -10,7 +10,7 @@ Creates the science application software (SAS) using the [RAiDER](https://github
 ### Prerequisite installs
 1. Download source code:
 ```bash
-git clone https://github.com/opera-adt/opera_tropo.git
+git clone https://github.com/opera-adt/tropo.git
 ```
 2. Install dependencies, either to a new environment:
 ```bash
