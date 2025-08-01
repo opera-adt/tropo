@@ -58,6 +58,7 @@ RUN mamba env create -f /home/ops/opera_tropo/conda-env.yml && \
 
 ENV CONDA_DEFAULT_ENV=opera_tropo
 ENV PATH="/opt/conda/envs/${CONDA_DEFAULT_ENV}/bin:$PATH"
+ENV SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPERA_TROPO=1.0.0
 
 # Install repository with pip
 RUN python -m pip install --no-cache-dir /home/ops/opera_tropo
