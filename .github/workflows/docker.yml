@@ -77,7 +77,7 @@ jobs:
 
       - name: Upload Docker image tarball as artifact
         if: ${{ env.VERSION_TAG != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: docker-image-${{ env.VERSION_TAG }}.tar
           path: ${{ env.VERSION_TAG }}.tar
